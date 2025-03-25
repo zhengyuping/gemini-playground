@@ -37,7 +37,7 @@ body {
 
 #chat-container, #logs-container {
     border: 1px solid #ccc;
-    height: 150px; /* Reduced height for logs window */
+    height: 360px; /* Reduced height for logs window */
     overflow-y: auto;
     margin-bottom: 10px;
     padding: 10px;
@@ -49,7 +49,7 @@ body {
     scroll-behavior: smooth;
     display: flex; /* 使用 flex 布局 */
     flex-direction: column;
-    width: 100%;
+    width: auto;
     margin-bottom: 20px;
     padding-right: 20px;
     overflow-x: auto; /* 允许水平滚动，避免超出父容器 */
@@ -57,7 +57,8 @@ body {
 }
 
 #logs-container {
-    height: 100px; /* Further reduce height for logs window */
+    height: 180px; /* Further reduce height for logs window */
+	display: none;
 }
 
 .log-entry.user {
@@ -84,183 +85,37 @@ body {
 
 .log-entry {
     font-size: 0.9em;
-    margin-bottom: 15px; /* Increased margin */
-    padding: 10px 15px; /* Increased padding */
+    margin-bottom: 6px;
+    padding: 8px 12px;
     border-radius: 16px;
     background-color: #e0e0e0;
-    display: flex; /* Use flex layout */
-    flex-direction: column; /* Stack items vertically */
+    display: inline-block; /* 使用 inline-block，宽度自适应 */
     word-wrap: break-word;
-    max-width: 70%;
-    vertical-align: top;
-    align-items: flex-start; /* Align items to the start */
-}
-
-.log-entry.user {
-    align-items: flex-end; /* Align user messages to the end (right) */
-}
-
-.log-entry.ai {
-    background-color: #ffcc80;
-    color: #fff;
+    max-width: 90%; /* 最大宽度限制 */
+    vertical-align: top; /* 顶部对齐 */
+    /* width: fit-content;  移除 fit-content */
+    /* width: -moz-fit-content; 移除 fit-content */
 }
 
 .log-entry.system {
-    background-color: #f0f7da;
     color: #080;
+    background-color: #f0f7da;
+}
+
+.log-entry.ai {
+    color: #fff;
+    background-color: #ffcc80; /* 更换为柔和的浅橙色 */
+    display: block; /* 确保 AI 消息是 block-level */
+    align-self: flex-start; /* AI 消息左对齐 - 再次明确设置 */
 }
 
 .log-entry .timestamp {
     color: #888;
-    font-size: 0.8em;
-    text-align: center; /* Center timestamp */
-    margin-bottom: 5px; /* Add some space below timestamp */
-    order: 1; /* Place timestamp first */
-    width: 100%; /* Full width for centering */
+    margin-right: 5px;
 }
 
 .log-entry .emoji {
-    margin-right: 0; /* Remove right margin */
-    order: 2; /* Place emoji second */
-    align-self: flex-start; /* Align emoji to start of container */
-}
-
-.message-content {
-    order: 3; /* Place message content last */
-    word-wrap: break-word; /* Wrap long words */
-    width: 100%; /* Take full width */
-}
-:root {
-    --primary-color: #4285f4;
-    --secondary-color: #34a853;
-    --danger-color: #ea4335;
-    --background-color: #f0f0f0;
-    --surface-color: #fff;
-    --border-color: #ccc;
-    --text-color: #333;
-    --text-secondary: #666;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --primary-color-rgb: 66, 133, 244;
-}
-
-body {
-    font-family: sans-serif;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    min-height: 100vh;
-    background-color: #f0f0f0;
-}
-
-#app {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 1000px;
-}
-
-#chat-container, #logs-container {
-    border: 1px solid #ccc;
-    height: 150px; /* Reduced height for logs window */
-    overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    scroll-behavior: smooth;
-    display: flex; /* 使用 flex 布局 */
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 20px;
-    padding-right: 20px;
-    overflow-x: auto; /* 允许水平滚动，避免超出父容器 */
-    align-items: flex-start; /* 默认左对齐 */
-}
-
-#logs-container {
-    height: 100px; /* Further reduce height for logs window */
-}
-
-.log-entry.user {
-    text-align: left; /* 文字左对齐 */
-    display: block; /* 确保独占一行 */
-    max-width: 80%; /* 设置最大宽度 */
-    float: none; /* 移除 float */
-    clear: both; /* 清除浮动，确保后续元素正常布局 */
-    align-self: flex-end; /* 用户消息右对齐 - 再次尝试在子元素上设置 */
-}
-
-/* #chat-container {
-    margin-right: 1%;
-    height: 400px;
-} */
-
-/* #logs-container {
-    margin-left: 1%;
-} */
-
-#logs-container:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.log-entry {
-    font-size: 0.9em;
-    margin-bottom: 15px; /* Increased margin */
-    padding: 10px 15px; /* Increased padding */
-    border-radius: 16px;
-    background-color: #e0e0e0;
-    display: flex; /* Use flex layout */
-    flex-direction: column; /* Stack items vertically */
-    word-wrap: break-word;
-    max-width: 70%;
-    vertical-align: top;
-    align-items: flex-start; /* Align items to the start */
-}
-
-.log-entry.user {
-    align-items: flex-end; /* Align user messages to the end (right) */
-}
-
-.log-entry.ai {
-    background-color: #ffcc80;
-    color: #fff;
-}
-
-.log-entry.system {
-    background-color: #f0f7da;
-    color: #080;
-}
-
-.log-entry .timestamp {
-    color: #888;
-    font-size: 0.8em;
-    text-align: center; /* Center timestamp */
-    margin-bottom: 5px; /* Add some space below timestamp */
-    order: 1; /* Place timestamp first */
-    width: 100%; /* Full width for centering */
-}
-
-.log-entry .emoji {
-    margin-right: 0; /* Remove right margin */
-    order: 2; /* Place emoji second */
-    align-self: flex-start; /* Align emoji to start of container */
-}
-
-.message-content {
-    order: 3; /* Place message content last */
-    word-wrap: break-word; /* Wrap long words */
-    width: 100%; /* Take full width */
+    margin-right: 5px;
 }
 
 #message-input {
@@ -344,7 +199,7 @@ body {
 
 #connect-button {
     padding: 10px 20px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     border: none;
     border-radius: 4px;
     background-color: #34a853;
@@ -542,14 +397,15 @@ body {
 /* Add styles for screen preview */
 #screen-container {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* 关键的水平居中 */
     background: #000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 480px;
-    height: 360px;
+    width: 320px;
+    height: 180px;
     transition: all 0.3s ease;
     display: none;
     z-index: 1000;
