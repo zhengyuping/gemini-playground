@@ -96,12 +96,7 @@ const client = new MultimodalLiveClient();
 function logMessage(message, type = 'system', isLog = false) {
     const logEntry = document.createElement('div');
     logEntry.classList.add('log-entry', type);
-
-    const timestamp = document.createElement('span');
-    timestamp.classList.add('timestamp');
-    timestamp.textContent = new Date().toLocaleTimeString();
-    logEntry.appendChild(timestamp);
-
+	
     const emoji = document.createElement('span');
     emoji.classList.add('emoji');
     switch (type) {
@@ -116,6 +111,14 @@ function logMessage(message, type = 'system', isLog = false) {
             break;
     }
     logEntry.appendChild(emoji);
+	
+    const timestamp = document.createElement('span');
+    timestamp.classList.add('timestamp');
+    timestamp.textContent = new Date().toLocaleTimeString();
+    logEntry.appendChild(timestamp);
+    // 添加换行符
+    const br = document.createElement('br');
+    logEntry.appendChild(br);
 
     const messageText = document.createElement('span');
     messageText.textContent = message;
