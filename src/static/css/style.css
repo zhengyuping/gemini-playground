@@ -58,8 +58,9 @@ body {
 
 .log-entry.user {
     text-align: right;
-    width: 100%; /* Force line break for user messages */
-    display: block; /* Force line break for user messages */
+    width: 100%; /* 强制换行 */
+    display: block; /* 确保独占一行 */
+    word-break: break-all; /* 强制单词断开换行 */
 }
 
 /* #chat-container {
