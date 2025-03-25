@@ -57,10 +57,11 @@ body {
 }
 
 .log-entry.user {
-    text-align: right;
-    width: 100%; /* 强制换行 */
+    text-align: left; /* 文字左对齐 */
     display: block; /* 确保独占一行 */
-    word-break: break-all; /* 强制单词断开换行 */
+    max-width: 80%; /* 设置最大宽度 */
+    float: right; /* 浮动到右侧 */
+    clear: both; /* 清除浮动，确保后续元素正常布局 */
 }
 
 /* #chat-container {
