@@ -49,7 +49,7 @@ body {
     scroll-behavior: smooth;
     display: flex; /* 使用 flex 布局 */
     flex-direction: column;
-    width: 100%;
+    width: auto;
     margin-bottom: 20px;
     padding-right: 20px;
     overflow-x: auto; /* 允许水平滚动，避免超出父容器 */
