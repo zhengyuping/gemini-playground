@@ -87,7 +87,7 @@ body {
     font-size: 0.9em;
     margin-bottom: 6px;
     padding: 8px 12px;
-    border-radius: 16px;
+    border-radius: 10px;
     background-color: #e0e0e0;
     display: inline-block; /* 使用 inline-block，宽度自适应 */
     word-wrap: break-word;
