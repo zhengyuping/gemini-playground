@@ -35,7 +35,7 @@ body {
     max-width: 1000px;
 }
 
-#logs-container {
+#chat-container, #logs-container {
     border: 1px solid #ccc;
     height: 300px;
     overflow-y: auto;
@@ -47,6 +47,17 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
+    width: 48%; /* Adjust width for side-by-side layout */
+    display: inline-block; /* Display side-by-side */
+    vertical-align: top; /* Align to top */
+}
+
+#chat-container {
+    margin-right: 1%; /* Add some spacing between the two containers */
+}
+
+#logs-container {
+    margin-left: 1%; /* Add some spacing between the two containers */
 }
 
 #logs-container:hover {
