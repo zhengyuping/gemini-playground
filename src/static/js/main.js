@@ -12,6 +12,7 @@ import { ScreenRecorder } from './video/screen-recorder.js';
  */
 
 // DOM Elements
+const chatContainer = document.getElementById('chat-container');
 const logsContainer = document.getElementById('logs-container');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
@@ -89,8 +90,9 @@ const client = new MultimodalLiveClient();
  * Logs a message to the UI.
  * @param {string} message - The message to log.
  * @param {string} [type='system'] - The type of the message (system, user, ai).
+ * @param {boolean} [isLog=false] - Whether the message is a log message.
  */
-function logMessage(message, type = 'system') {
+function logMessage(message, type = 'system', isLog = false) {
     const logEntry = document.createElement('div');
     logEntry.classList.add('log-entry', type);
 
@@ -118,8 +120,9 @@ function logMessage(message, type = 'system') {
     messageText.textContent = message;
     logEntry.appendChild(messageText);
 
-    logsContainer.appendChild(logEntry);
-    logsContainer.scrollTop = logsContainer.scrollHeight;
+    const targetContainer = isLog ? logsContainer : chatContainer;
+    targetContainer.appendChild(logEntry);
+    targetContainer.scrollTop = targetContainer.scrollHeight;
 }
 
 /**
@@ -351,11 +354,11 @@ client.on('open', () => {
 });
 
 client.on('log', (log) => {
-    logMessage(`${log.type}: ${JSON.stringify(log.message)}`, 'system');
+    logMessage(`${log.type}: ${JSON.stringify(log.message)}`, 'system', true);
 });
 
 client.on('close', (event) => {
-    logMessage(`WebSocket connection closed (code ${event.code})`, 'system');
+    logMessage(`WebSocket connection closed (code ${event.code})`, 'system', true);
 });
 
 client.on('audio', async (data) => {
@@ -364,7 +367,7 @@ client.on('audio', async (data) => {
         const streamer = await ensureAudioInitialized();
         streamer.addPCM16(new Uint8Array(data));
     } catch (error) {
-        logMessage(`Error processing audio: ${error.message}`, 'system');
+        logMessage(`Error processing audio: ${error.message}`, 'system', true);
     }
 });
 
@@ -389,16 +392,16 @@ client.on('interrupted', () => {
     audioStreamer?.stop();
     isUsingTool = false;
     Logger.info('Model interrupted');
-    logMessage('Model interrupted', 'system');
+    logMessage('Model interrupted', 'system', true);
 });
 
 client.on('setupcomplete', () => {
-    logMessage('Setup complete', 'system');
+    logMessage('Setup complete', 'system', true);
 });
 
 client.on('turncomplete', () => {
     isUsingTool = false;
-    logMessage('Turn complete', 'system');
+    logMessage('Turn complete', 'system', true);
 });
 
 client.on('error', (error) => {
@@ -407,13 +410,13 @@ client.on('error', (error) => {
     } else {
         Logger.error('Unexpected error', error);
     }
-    logMessage(`Error: ${error.message}`, 'system');
+    logMessage(`Error: ${error.message}`, 'system', true);
 });
 
 client.on('message', (message) => {
     if (message.error) {
         Logger.error('Server error:', message.error);
-        logMessage(`Server error: ${message.error}`, 'system');
+        logMessage(`Server error: ${message.error}`, 'system', true);
     }
 });
 
@@ -555,4 +558,3 @@ function stopScreenSharing() {
 
 screenButton.addEventListener('click', handleScreenShare);
 screenButton.disabled = true;
-  
