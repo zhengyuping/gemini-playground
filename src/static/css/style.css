@@ -37,35 +37,38 @@ body {
 
 #chat-container, #logs-container {
     border: 1px solid #ccc;
-    height: 200px; /* Reduced height for logs window */
+    height: 150px; /* Reduced height for logs window */
     overflow-y: auto;
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 8px;
-    background-color: #f9f9f9; /* Light gray background for windows */
-    border: 1px solid #ccc; /* Visible border for windows */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
-    display: block; /* Ensure they stack vertically */
-    width: 100%; /* Take full width */
-    margin-bottom: 20px; /* Add spacing between windows */
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 #logs-container {
-    height: 50px; /* Further reduce height for logs window */
+    height: 100px; /* Further reduce height for logs window */
 }
 
 .log-entry.user {
-    text-align: right; /* Right-align user messages */
+    text-align: right;
+    width: 100%; /* Force line break for user messages */
+    display: block; /* Force line break for user messages */
 }
 
 /* #chat-container {
-    margin-right: 1%;  Add some spacing between the two containers
-}
+    margin-right: 1%;
+    height: 400px;
+} */
 
-#logs-container {
-    margin-left: 1%;  Add some spacing between the two containers
+/* #logs-container {
+    margin-left: 1%;
 } */
 
 #logs-container:hover {
@@ -78,7 +81,7 @@ body {
     padding: 8px 12px;
     border-radius: 16px;
     background-color: #e0e0e0;
-    display: block; /* Change to block to make each message occupy full width */
+    display: block; /* Default to block for AI messages */
     word-wrap: break-word;
 }
 
@@ -87,18 +90,10 @@ body {
     background-color: #f0f7da;
 }
 
-.log-entry.user {
-    color: #fff;
-    background-color: #4285f4;
-     display: inline-block; /* Keep inline-block for user messages to align right */
-     text-align: right;
-     float: right; /* Align right */
-}
-
 .log-entry.ai {
     color: #fff;
     background-color: #ea4335;
-     display: block; /* Make AI messages block for line break */
+    display: block; /* Ensure AI messages are block-level */
 }
 
 .log-entry .timestamp {
