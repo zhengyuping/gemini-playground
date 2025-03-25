@@ -82,6 +82,7 @@ let videoManager = null;
 let isScreenSharing = false;
 let screenRecorder = null;
 let isUsingTool = false;
+let currentAiLogEntry = null; // Track current AI log entry for streaming
 
 // Multimodal Client
 const client = new MultimodalLiveClient();
@@ -123,6 +124,12 @@ function logMessage(message, type = 'system', isLog = false) {
     const targetContainer = isLog ? logsContainer : chatContainer;
     targetContainer.appendChild(logEntry);
     targetContainer.scrollTop = targetContainer.scrollHeight;
+
+    if (type === 'ai') {
+        currentAiLogEntry = messageText; // Track for streaming updates
+    } else {
+        currentAiLogEntry = null;
+    }
 }
 
 /**
@@ -141,12 +148,12 @@ function updateMicIcon() {
 function updateAudioVisualizer(volume, isInput = false) {
     const visualizer = isInput ? inputAudioVisualizer : audioVisualizer;
     const audioBar = visualizer.querySelector('.audio-bar') || document.createElement('div');
-    
+
     if (!visualizer.contains(audioBar)) {
         audioBar.classList.add('audio-bar');
         visualizer.appendChild(audioBar);
     }
-    
+
     audioBar.style.width = `${volume * 100}%`;
     if (volume > 0) {
         audioBar.classList.add('active');
@@ -181,11 +188,11 @@ async function handleMicToggle() {
         try {
             await ensureAudioInitialized();
             audioRecorder = new AudioRecorder();
-            
+
             const inputAnalyser = audioCtx.createAnalyser();
             inputAnalyser.fftSize = 256;
             const inputDataArray = new Uint8Array(inputAnalyser.frequencyBinCount);
-            
+
             await audioRecorder.start((base64Data) => {
                 if (isUsingTool) {
                     client.sendRealtimeInput([{
@@ -199,7 +206,7 @@ async function handleMicToggle() {
                         data: base64Data
                     }]);
                 }
-                
+
                 inputAnalyser.getByteFrequencyData(inputDataArray);
                 const inputVolume = Math.max(...inputDataArray) / 255;
                 updateAudioVisualizer(inputVolume, true);
@@ -208,7 +215,7 @@ async function handleMicToggle() {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const source = audioCtx.createMediaStreamSource(stream);
             source.connect(inputAnalyser);
-            
+
             await audioStreamer.resume();
             isRecording = true;
             Logger.info('Microphone started');
@@ -261,8 +268,8 @@ async function connectToWebsocket() {
         generationConfig: {
             responseModalities: responseTypeSelect.value,
             speechConfig: {
-                voiceConfig: { 
-                    prebuiltVoiceConfig: { 
+                voiceConfig: {
+                    prebuiltVoiceConfig: {
                         voiceName: voiceSelect.value    // You can change voice in the config.js file
                     }
                 }
@@ -274,10 +281,10 @@ async function connectToWebsocket() {
                 text: systemInstructionInput.value     // You can change system instruction in the config.js file
             }],
         }
-    };  
+    };
 
     try {
-        await client.connect(config,apiKeyInput.value);
+        await client.connect(config, apiKeyInput.value);
         isConnected = true;
         await resumeAudioContext();
         connectButton.textContent = 'Disconnect';
@@ -326,11 +333,11 @@ function disconnectFromWebsocket() {
     cameraButton.disabled = true;
     screenButton.disabled = true;
     logMessage('Disconnected from server', 'system');
-    
+
     if (videoManager) {
         stopVideo();
     }
-    
+
     if (screenRecorder) {
         stopScreenSharing();
     }
@@ -381,12 +388,18 @@ client.on('content', (data) => {
             Logger.info('Tool usage completed');
         }
 
-        const text = data.modelTurn.parts.map(part => part.text).join('');
-        if (text) {
-            logMessage(text, 'ai');
-        }
+        // 流式输出实现
+        const textParts = data.modelTurn.parts.map(part => part.text);
+        textParts.forEach(text => {
+            if (currentAiLogEntry) {
+                currentAiLogEntry.textContent += text; // Append text to existing message
+            } else {
+                logMessage(text, 'ai', false); // Create new message if not started
+            }
+        });
     }
 });
+
 
 client.on('interrupted', () => {
     audioStreamer?.stop();
@@ -448,7 +461,7 @@ connectButton.textContent = 'Connect';
  */
 async function handleVideoToggle() {
     Logger.info('Video toggle clicked, current state:', { isVideoActive, isConnected });
-    
+
     localStorage.setItem('video_fps', fpsInput.value);
 
     if (!isVideoActive) {
@@ -457,8 +470,8 @@ async function handleVideoToggle() {
             if (!videoManager) {
                 videoManager = new VideoManager();
             }
-            
-            await videoManager.start(fpsInput.value,(frameData) => {
+
+            await videoManager.start(fpsInput.value, (frameData) => {
                 if (isConnected) {
                     client.sendRealtimeInput([frameData]);
                 }
@@ -511,7 +524,7 @@ async function handleScreenShare() {
     if (!isScreenSharing) {
         try {
             screenContainer.style.display = 'block';
-            
+
             screenRecorder = new ScreenRecorder();
             await screenRecorder.start(screenPreview, (frameData) => {
                 if (isConnected) {
