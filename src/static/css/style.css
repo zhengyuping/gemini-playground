@@ -48,7 +48,9 @@ body {
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
     display: block;
-    width: 100%;
+    width: 95%; /* 减少容器宽度，留出右侧空间 */
+    margin-left: auto; /* 容器居中 */
+    margin-right: auto; /* 容器居中 */
     margin-bottom: 20px;
 }
 
@@ -83,8 +85,11 @@ body {
     padding: 8px 12px;
     border-radius: 16px;
     background-color: #e0e0e0;
-    display: block; /* Default to block for AI messages */
+    display: inline-block; /* 修改为 inline-block，使气泡宽度自适应 */
     word-wrap: break-word;
+    max-width: 80%; /* 最大宽度限制 */
+    margin-right: auto; /* 尝试居中 */
+    margin-left: auto; /* 尝试居中 */
 }
 
 .log-entry.system {
