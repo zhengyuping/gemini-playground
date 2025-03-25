@@ -399,6 +399,7 @@ body {
     position: fixed;
     bottom: 20px;
     left: 50%;
+    transform: translateX(-50%); /* 关键的水平居中 */
     background: #000;
     border-radius: 12px;
     overflow: hidden;
