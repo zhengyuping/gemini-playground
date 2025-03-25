@@ -118,10 +118,8 @@ function logMessage(message, type = 'system', isLog = false) {
     logEntry.appendChild(emoji);
 
     const messageText = document.createElement('span');
-    const messageContent = document.createElement('span');
-    messageContent.classList.add('message-content');
-    messageContent.textContent = message;
-    logEntry.appendChild(messageContent);
+    messageText.textContent = message;
+    logEntry.appendChild(messageText);
 
     const targetContainer = isLog ? logsContainer : chatContainer;
     targetContainer.appendChild(logEntry);
@@ -568,4 +566,3 @@ function stopScreenSharing() {
 }
 
 screenButton.addEventListener('click', handleScreenShare);
-screenButton.disabled = true;
