@@ -412,6 +412,7 @@ client.on('setupcomplete', () => {
 client.on('turncomplete', () => {
     isUsingTool = false;
     logMessage('Turn complete', 'system', true);
+    currentAiLogEntry = null; // Reset for new response
 });
 
 client.on('error', (error) => {
@@ -565,4 +566,3 @@ function stopScreenSharing() {
 }
 
 screenButton.addEventListener('click', handleScreenShare);
-screenButton.disabled = true;
