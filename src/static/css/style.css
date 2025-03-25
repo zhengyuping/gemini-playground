@@ -35,19 +35,38 @@ body {
     max-width: 1000px;
 }
 
-#logs-container {
+#chat-container, #logs-container {
     border: 1px solid #ccc;
-    height: 300px;
+    height: 200px; /* Reduced height for logs window */
     overflow-y: auto;
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9; /* Light gray background for windows */
+    border: 1px solid #ccc; /* Visible border for windows */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
+    display: block; /* Ensure they stack vertically */
+    width: 100%; /* Take full width */
+    margin-bottom: 20px; /* Add spacing between windows */
 }
+
+#logs-container {
+    height: 150px; /* Further reduce height for logs window */
+}
+
+.log-entry.user {
+    text-align: right; /* Right-align user messages */
+}
+
+/* #chat-container {
+    margin-right: 1%;  Add some spacing between the two containers
+}
+
+#logs-container {
+    margin-left: 1%;  Add some spacing between the two containers
+} */
 
 #logs-container:hover {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -55,19 +74,28 @@ body {
 
 .log-entry {
     font-size: 0.9em;
-    margin-bottom: 5px;
+    margin-bottom: 10px; /* Increased margin for better spacing */
+    padding: 8px 12px; /* Padding for message bubbles */
+    border-radius: 16px; /* Rounded corners for bubbles */
+    background-color: #e0e0e0; /* Light gray bubble background */
+    display: inline-block; /* Adjust to inline-block for bubble effect */
+    word-wrap: break-word; /* Ensure long words break */
+    max-width: 70%; /* Limit bubble width */
 }
 
 .log-entry.system {
     color: #080; /* Green for system messages */
+    background-color: #f0f7da; /* Lighter green for system bubbles */
 }
 
 .log-entry.user {
-    color: #008; /* Blue for user messages */
+    color: #fff; /* White text for user messages */
+    background-color: #4285f4; /* Primary color for user bubbles */
 }
 
 .log-entry.ai {
-    color: #800; /* Red for AI messages */
+    color: #fff; /* White text for AI messages */
+    background-color: #ea4335; /* Secondary color for AI bubbles */
 }
 
 .log-entry .timestamp {
