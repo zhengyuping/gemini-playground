@@ -47,8 +47,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
-    display: flex; /* 使用 flex 布局 */
-    flex-direction: column; /* 垂直排列 */
+    display: block; /* 改回 block 布局 */
     width: 100%;
     margin-bottom: 20px;
     padding-right: 20px; /* 增加右侧内边距 */
@@ -64,7 +63,7 @@ body {
     max-width: 80%; /* 设置最大宽度 */
     float: none; /* 移除 float */
     clear: both; /* 清除浮动，确保后续元素正常布局 */
-    align-self: flex-end; /* 用户消息右对齐 */
+    align-self: auto; /* 移除 flexbox 对齐 */
 }
 
 /* #chat-container {
@@ -86,11 +85,10 @@ body {
     padding: 8px 12px;
     border-radius: 16px;
     background-color: #e0e0e0;
-    display: block; /* 改回 block */
+    display: inline-block; /* 使用 inline-block，宽度自适应 */
     word-wrap: break-word;
-    max-width: 80%; /* 最大宽度限制 */
-    margin-right: 0; /* 移除 margin-right */
-    margin-left: 0; /* 移除 margin-left */
+    max-width: 70%; /* 最大宽度限制 */
+    vertical-align: top; /* 顶部对齐 */
 }
 
 .log-entry.system {
@@ -100,9 +98,9 @@ body {
 
 .log-entry.ai {
     color: #fff;
-    background-color: #ea4335;
+    background-color: #ffcc80; /* 更换为柔和的浅橙色 */
     display: block; /* 确保 AI 消息是 block-level */
-    align-self: flex-start; /* AI 消息左对齐 */
+    align-self: auto; /* 移除 flexbox 对齐 */
 }
 
 .log-entry .timestamp {
