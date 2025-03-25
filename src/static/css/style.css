@@ -103,8 +103,8 @@ body {
 }
 
 .log-entry.ai {
-    color: #fff;
-    background-color: #ffcc80; /* 更换为柔和的浅橙色 */
+    color: #000;
+    background-color: #ffe8c5; /* 更换为柔和的浅橙色 */
     display: block; /* 确保 AI 消息是 block-level */
     align-self: flex-start; /* AI 消息左对齐 - 再次明确设置 */
 }
