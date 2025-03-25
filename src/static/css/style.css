@@ -57,7 +57,7 @@ body {
 }
 
 #logs-container {
-    height: 100px; /* Further reduce height for logs window */
+    height: 0px; /* Further reduce height for logs window */
 }
 
 .log-entry.user {
