@@ -47,10 +47,13 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
-    display: block; /* 改回 block 布局 */
+    display: flex; /* 使用 flex 布局 */
+    flex-direction: column;
     width: 100%;
     margin-bottom: 20px;
-    padding-right: 20px; /* 增加右侧内边距 */
+    padding-right: 20px;
+    overflow-x: auto; /* 允许水平滚动，避免超出父容器 */
+    align-items: flex-start; /* 默认左对齐 */
 }
 
 #logs-container {
@@ -63,7 +66,7 @@ body {
     max-width: 80%; /* 设置最大宽度 */
     float: none; /* 移除 float */
     clear: both; /* 清除浮动，确保后续元素正常布局 */
-    align-self: auto; /* 移除 flexbox 对齐 */
+    align-self: flex-end; /* 用户消息右对齐 - 再次尝试在子元素上设置 */
 }
 
 /* #chat-container {
@@ -89,6 +92,8 @@ body {
     word-wrap: break-word;
     max-width: 70%; /* 最大宽度限制 */
     vertical-align: top; /* 顶部对齐 */
+    /* width: fit-content;  移除 fit-content */
+    /* width: -moz-fit-content; 移除 fit-content */
 }
 
 .log-entry.system {
@@ -100,7 +105,7 @@ body {
     color: #fff;
     background-color: #ffcc80; /* 更换为柔和的浅橙色 */
     display: block; /* 确保 AI 消息是 block-level */
-    align-self: auto; /* 移除 flexbox 对齐 */
+    align-self: flex-start; /* AI 消息左对齐 - 再次明确设置 */
 }
 
 .log-entry .timestamp {
@@ -154,7 +159,7 @@ body {
     transition: width 0.3s ease, height 0.3s ease;
 }
 
-#send-button:active::after, #mic-button::after {
+#send-button:active::after, #mic-button::active::after {
     width: 200px;
     height: 200px;
 }
