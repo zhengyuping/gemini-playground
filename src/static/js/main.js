@@ -53,7 +53,7 @@ if (savedVoice) {
 }
 
 if (savedFPS) {
-    fpsInput.value = savedFPS;
+    fpsInput.value = fpsInput.value;
 }
 if (savedSystemInstruction) {
     systemInstructionInput.value = savedSystemInstruction;
@@ -127,8 +127,6 @@ function logMessage(message, type = 'system', isLog = false) {
 
     if (type === 'ai') {
         currentAiLogEntry = messageText; // Track for streaming updates
-    } else {
-        currentAiLogEntry = null;
     }
 }
 
@@ -388,13 +386,12 @@ client.on('content', (data) => {
             Logger.info('Tool usage completed');
         }
 
-        // 流式输出实现
-        const textParts = data.modelTurn.parts.map(part => part.text);
-        textParts.forEach(text => {
-            if (currentAiLogEntry) {
-                currentAiLogEntry.textContent += text; // Append text to existing message
-            } else {
-                logMessage(text, 'ai', false); // Create new message if not started
+        if (currentAiLogEntry === null) {
+            logMessage('', 'ai'); // Create empty AI message
+        }
+        data.modelTurn.parts.forEach(part => {
+            if (part.text) {
+                currentAiLogEntry.textContent += part.text; // Append text
             }
         });
     }
@@ -457,7 +454,6 @@ connectButton.textContent = 'Connect';
 
 /**
  * Handles the video toggle. Starts or stops video streaming.
- * @returns {Promise<void>}
  */
 async function handleVideoToggle() {
     Logger.info('Video toggle clicked, current state:', { isVideoActive, isConnected });
@@ -518,7 +514,6 @@ cameraButton.disabled = true;
 
 /**
  * Handles the screen share toggle. Starts or stops screen sharing.
- * @returns {Promise<void>}
  */
 async function handleScreenShare() {
     if (!isScreenSharing) {
