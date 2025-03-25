@@ -47,11 +47,11 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
     scroll-behavior: smooth;
-    display: block;
-    width: 95%; /* 减少容器宽度，留出右侧空间 */
-    margin-left: auto; /* 容器居中 */
-    margin-right: auto; /* 容器居中 */
+    display: flex; /* 使用 flex 布局 */
+    flex-direction: column; /* 垂直排列 */
+    width: 100%;
     margin-bottom: 20px;
+    padding-right: 20px; /* 增加右侧内边距 */
 }
 
 #logs-container {
@@ -62,8 +62,9 @@ body {
     text-align: left; /* 文字左对齐 */
     display: block; /* 确保独占一行 */
     max-width: 80%; /* 设置最大宽度 */
-    float: right; /* 浮动到右侧 */
+    float: none; /* 移除 float */
     clear: both; /* 清除浮动，确保后续元素正常布局 */
+    align-self: flex-end; /* 用户消息右对齐 */
 }
 
 /* #chat-container {
@@ -85,11 +86,11 @@ body {
     padding: 8px 12px;
     border-radius: 16px;
     background-color: #e0e0e0;
-    display: inline-block; /* 修改为 inline-block，使气泡宽度自适应 */
+    display: block; /* 改回 block */
     word-wrap: break-word;
     max-width: 80%; /* 最大宽度限制 */
-    margin-right: auto; /* 尝试居中 */
-    margin-left: auto; /* 尝试居中 */
+    margin-right: 0; /* 移除 margin-right */
+    margin-left: 0; /* 移除 margin-left */
 }
 
 .log-entry.system {
@@ -100,7 +101,8 @@ body {
 .log-entry.ai {
     color: #fff;
     background-color: #ea4335;
-    display: block; /* Ensure AI messages are block-level */
+    display: block; /* 确保 AI 消息是 block-level */
+    align-self: flex-start; /* AI 消息左对齐 */
 }
 
 .log-entry .timestamp {
@@ -154,7 +156,7 @@ body {
     transition: width 0.3s ease, height 0.3s ease;
 }
 
-#send-button:active::after, #mic-button:active::after {
+#send-button:active::after, #mic-button::after {
     width: 200px;
     height: 200px;
 }
