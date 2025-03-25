@@ -404,8 +404,8 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 480px;
-    height: 360px;
+    width: 320px;
+    height: 180px;
     transition: all 0.3s ease;
     display: none;
     z-index: 1000;
