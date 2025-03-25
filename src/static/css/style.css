@@ -137,7 +137,9 @@ body {
     position: relative;
     overflow: hidden;
 }
-
+#mic-button {
+   border-radius: 50%;
+}	
 #send-button:hover, #mic-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
