@@ -37,6 +37,7 @@ const systemInstructionInput = document.getElementById('system-instruction');
 systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 const applyConfigButton = document.getElementById('apply-config');
 const responseTypeSelect = document.getElementById('response-type-select');
+const testButton = document.getElementById('test-button');
 
 // Load saved values from localStorage
 const savedApiKey = localStorage.getItem('gemini_api_key');
@@ -90,8 +91,8 @@ const client = new MultimodalLiveClient();
 /**
  * Logs a message to the UI.
  * @param {string} message - The message to log.
- * @param {string} [type='system'] - The type of the message (system, user, ai).
- * @param {boolean} [isLog=false] - Whether the message is a log message.
+ * @param {string} type='system' - The type of the message (system, user, ai).
+ * @param {boolean} isLog - Whether the message is a log message.
  */
 function logMessage(message, type = 'system', isLog = false) {
     const logEntry = document.createElement('div');
@@ -143,8 +144,6 @@ function updateMicIcon() {
 
 /**
  * Updates the audio visualizer based on the audio volume.
- * @param {number} volume - The audio volume (0.0 to 1.0).
- * @param {boolean} [isInput=false] - Whether the visualizer is for input audio.
  */
 function updateAudioVisualizer(volume, isInput = false) {
     const visualizer = isInput ? inputAudioVisualizer : audioVisualizer;
@@ -165,7 +164,6 @@ function updateAudioVisualizer(volume, isInput = false) {
 
 /**
  * Initializes the audio context and streamer if not already initialized.
- * @returns {Promise<AudioStreamer>} The audio streamer instance.
  */
 async function ensureAudioInitialized() {
     if (!audioCtx) {
@@ -182,7 +180,6 @@ async function ensureAudioInitialized() {
 
 /**
  * Handles the microphone toggle. Starts or stops audio recording.
- * @returns {Promise<void>}
  */
 async function handleMicToggle() {
     if (!isRecording) {
@@ -241,7 +238,6 @@ async function handleMicToggle() {
 
 /**
  * Resumes the audio context if it's suspended.
- * @returns {Promise<void>}
  */
 async function resumeAudioContext() {
     if (audioCtx && audioCtx.state === 'suspended') {
@@ -251,7 +247,6 @@ async function resumeAudioContext() {
 
 /**
  * Connects to the WebSocket server.
- * @returns {Promise<void>}
  */
 async function connectToWebsocket() {
     if (!apiKeyInput.value) {
@@ -400,33 +395,33 @@ client.on('content', (data) => {
                 aiResponse += part.text;
             }
         });
-
-        // Add POST request
-        fetch('http://127.0.0.1:8010/human', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                text: "test",
-                type: 'echo',
-                interrupt: true,
-                sessionid: 0
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Message sent to digital human successfully!');
-            } else {
-                console.error('Failed to send message to digital human.');
-            }
-        })
-        .catch(error => {
-            console.error('Error sending message to digital human:', error);
-        });
     }
 });
 
+testButton.addEventListener('click', () => {
+    fetch('http://127.0.0.1:8010/human', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            text: "test",
+            type: 'echo',
+            interrupt: true,
+            sessionid: 0
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Message sent to digital human successfully!');
+        } else {
+            console.error('Failed to send message to digital human.');
+        }
+    })
+    .catch(error => {
+        console.error('Error sending message to digital human:', error);
+    });
+});
 
 client.on('interrupted', () => {
     audioStreamer?.stop();
@@ -456,7 +451,7 @@ client.on('error', (error) => {
 
 client.on('message', (message) => {
     if (message.error) {
-        Logger.error('Server error:', message.error);
+        Logger.error(`Server error: ${message.error}`, 'system', true);
         logMessage(`Server error: ${message.error}`, 'system', true);
     }
 });
@@ -509,7 +504,7 @@ async function handleVideoToggle() {
             cameraButton.classList.add('active');
             Logger.info('Camera started successfully');
             logMessage('Camera started', 'system');
-
+            updateMicIcon();
         } catch (error) {
             Logger.error('Camera error:', error);
             logMessage(`Error: ${error.message}`, 'system');
@@ -566,7 +561,6 @@ async function handleScreenShare() {
             screenButton.classList.add('active');
             Logger.info('Screen sharing started');
             logMessage('Screen sharing started', 'system');
-
         } catch (error) {
             Logger.error('Screen sharing error:', error);
             logMessage(`Error: ${error.message}`, 'system');
