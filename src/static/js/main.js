@@ -403,7 +403,7 @@ client.on('content', (data) => {
 
         // 将回复内容 POST 到数字人
         const sessionid = document.getElementById('sessionid').value;
-        fetch('/human', {
+        fetch('http://127.0.0.1:8010/human', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
