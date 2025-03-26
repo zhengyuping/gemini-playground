@@ -398,3 +398,57 @@ client.on('content', (data) => {
 });
 
 client.on('interrupted', () => {
+    audioStreamer?.stop();
+    isUsingTool = false;
+    Logger.info('Model interrupted');
+    logMessage('Model interrupted', 'system', true);
+});
+
+client.on('setupcomplete', () => {
+    logMessage('Setup complete', 'system', true);
+});
+
+client.on('turncomplete', () => {
+    isUsingTool = false;
+    logMessage('Turn complete', 'system', true);
+    currentAiLogEntry = null; // Reset for new response
+});
+
+client.on('error', (error) => {
+    if (error instanceof ApplicationError) {
+        Logger.error(`Application error: ${error.message}`, error);
+    } else {
+        Logger.error('Unexpected error', error);
+    }
+    logMessage(`Error: ${error.message}`, 'system', true);
+});
+
+client.on('message', (message) => {
+    if (message.error) {
+        Logger.error(`Server error: ${message.error}`, 'system', true);
+        logMessage(`Server error: ${message.error}`, 'system', true);
+    }
+});
+
+sendButton.addEventListener('click', handleSendMessage);
+messageInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        handleSendMessage();
+    }
+});
+
+micButton.addEventListener('click', handleMicToggle);
+
+connectButton.addEventListener('click', () => {
+    if (isConnected) {
+        disconnectFromWebsocket();
+    } else {
+        connectToWebsocket();
+    }
+});
+
+messageInput.disabled = true;
+sendButton.disabled = true;
+micButton.disabled = true;
+cameraButton.disabled = true;
+connectButton.textContent = 'Connect';
