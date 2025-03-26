@@ -90,8 +90,8 @@ const client = new MultimodalLiveClient();
 /**
  * Logs a message to the UI.
  * @param {string} message - The message to log.
- * @param {string} type='system' - The type of the message (system, user, ai).
- * @param {boolean} isLog - Whether the message is a log message.
+ * @param {string} [type='system'] - The type of the message (system, user, ai).
+ * @param {boolean} [isLog=false] - Whether the message is a log message.
  */
 function logMessage(message, type = 'system', isLog = false) {
     const logEntry = document.createElement('div');
@@ -143,6 +143,8 @@ function updateMicIcon() {
 
 /**
  * Updates the audio visualizer based on the audio volume.
+ * @param {number} volume - The audio volume (0.0 to 1.0).
+ * @param {boolean} [isInput=false] - Whether the visualizer is for input audio.
  */
 function updateAudioVisualizer(volume, isInput = false) {
     const visualizer = isInput ? inputAudioVisualizer : audioVisualizer;
@@ -163,6 +165,7 @@ function updateAudioVisualizer(volume, isInput = false) {
 
 /**
  * Initializes the audio context and streamer if not already initialized.
+ * @returns {Promise<AudioStreamer>} The audio streamer instance.
  */
 async function ensureAudioInitialized() {
     if (!audioCtx) {
@@ -179,6 +182,7 @@ async function ensureAudioInitialized() {
 
 /**
  * Handles the microphone toggle. Starts or stops audio recording.
+ * @returns {Promise<void>}
  */
 async function handleMicToggle() {
     if (!isRecording) {
@@ -237,6 +241,7 @@ async function handleMicToggle() {
 
 /**
  * Resumes the audio context if it's suspended.
+ * @returns {Promise<void>}
  */
 async function resumeAudioContext() {
     if (audioCtx && audioCtx.state === 'suspended') {
@@ -246,8 +251,9 @@ async function resumeAudioContext() {
 
 /**
  * Connects to the WebSocket server.
+ * @returns {Promise<void>}
  */
-function connectToWebsocket() {
+async function connectToWebsocket() {
     if (!apiKeyInput.value) {
         logMessage('Please input API Key', 'system');
         return;
@@ -279,9 +285,9 @@ function connectToWebsocket() {
     };
 
     try {
-        client.connect(config, apiKeyInput.value);
+        await client.connect(config, apiKeyInput.value);
         isConnected = true;
-        resumeAudioContext();
+        await resumeAudioContext();
         connectButton.textContent = 'Disconnect';
         connectButton.classList.add('connected');
         messageInput.disabled = false;
@@ -348,6 +354,29 @@ function handleSendMessage() {
         logMessage(message, 'user');
         client.send({ text: message });
         messageInput.value = '';
+
+        // Add POST request
+        fetch('http://127.0.0.1:8010/human', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: message,
+                type: 'chat',
+                interrupt: true
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Message sent to digital human successfully!');
+            } else {
+                console.error('Failed to send message to digital human.');
+            }
+        })
+        .catch(error => {
+            console.error('Error sending message to digital human:', error);
+        });
     }
 }
 
@@ -387,15 +416,14 @@ client.on('content', (data) => {
         if (currentAiLogEntry === null) {
             logMessage('', 'ai'); // Create empty AI message
         }
-        let aiResponse = '';
         data.modelTurn.parts.forEach(part => {
             if (part.text) {
                 currentAiLogEntry.textContent += part.text; // Append text
-                aiResponse += part.text;
             }
         });
     }
 });
+
 
 client.on('interrupted', () => {
     audioStreamer?.stop();
@@ -425,7 +453,7 @@ client.on('error', (error) => {
 
 client.on('message', (message) => {
     if (message.error) {
-        Logger.error(`Server error: ${message.error}`, 'system', true);
+        Logger.error('Server error:', message.error);
         logMessage(`Server error: ${message.error}`, 'system', true);
     }
 });
@@ -450,5 +478,118 @@ connectButton.addEventListener('click', () => {
 messageInput.disabled = true;
 sendButton.disabled = true;
 micButton.disabled = true;
-cameraButton.disabled = true;
 connectButton.textContent = 'Connect';
+
+/**
+ * Handles the video toggle. Starts or stops video streaming.
+ */
+async function handleVideoToggle() {
+    Logger.info('Video toggle clicked, current state:', { isVideoActive, isConnected });
+
+    localStorage.setItem('video_fps', fpsInput.value);
+
+    if (!isVideoActive) {
+        try {
+            Logger.info('Attempting to start video');
+            if (!videoManager) {
+                videoManager = new VideoManager();
+            }
+
+            await videoManager.start(fpsInput.value, (frameData) => {
+                if (isConnected) {
+                    client.sendRealtimeInput([frameData]);
+                }
+            });
+
+            isVideoActive = true;
+            cameraIcon.textContent = 'videocam_off';
+            cameraButton.classList.add('active');
+            Logger.info('Camera started successfully');
+            logMessage('Camera started', 'system');
+
+        } catch (error) {
+            Logger.error('Camera error:', error);
+            logMessage(`Error: ${error.message}`, 'system');
+            isVideoActive = false;
+            videoManager = null;
+            cameraIcon.textContent = 'videocam';
+            cameraButton.classList.remove('active');
+        }
+    } else {
+        Logger.info('Stopping video');
+        stopVideo();
+    }
+}
+
+/**
+ * Stops the video streaming.
+ */
+function stopVideo() {
+    if (videoManager) {
+        videoManager.stop();
+        videoManager = null;
+    }
+    isVideoActive = false;
+    cameraIcon.textContent = 'videocam';
+    cameraButton.classList.remove('active');
+    logMessage('Camera stopped', 'system');
+}
+
+cameraButton.addEventListener('click', handleVideoToggle);
+stopVideoButton.addEventListener('click', stopVideo);
+
+cameraButton.disabled = true;
+
+/**
+ * Handles the screen share toggle. Starts or stops screen sharing.
+ */
+async function handleScreenShare() {
+    if (!isScreenSharing) {
+        try {
+            screenContainer.style.display = 'block';
+
+            screenRecorder = new ScreenRecorder();
+            await screenRecorder.start(screenPreview, (frameData) => {
+                if (isConnected) {
+                    client.sendRealtimeInput([{
+                        mimeType: "image/jpeg",
+                        data: frameData
+                    }]);
+                }
+            });
+
+            isScreenSharing = true;
+            screenIcon.textContent = 'stop_screen_share';
+            screenButton.classList.add('active');
+            Logger.info('Screen sharing started');
+            logMessage('Screen sharing started', 'system');
+
+        } catch (error) {
+            Logger.error('Screen sharing error:', error);
+            logMessage(`Error: ${error.message}`, 'system');
+            isScreenSharing = false;
+            screenIcon.textContent = 'screen_share';
+            screenButton.classList.remove('active');
+            screenContainer.style.display = 'none';
+        }
+    } else {
+        stopScreenSharing();
+    }
+}
+
+/**
+ * Stops the screen sharing.
+ */
+function stopScreenSharing() {
+    if (screenRecorder) {
+        screenRecorder.stop();
+        screenRecorder = null;
+    }
+    isScreenSharing = false;
+    screenIcon.textContent = 'screen_share';
+    screenButton.classList.remove('active');
+    screenContainer.style.display = 'none';
+    logMessage('Screen sharing stopped', 'system');
+}
+
+screenButton.addEventListener('click', handleScreenShare);
