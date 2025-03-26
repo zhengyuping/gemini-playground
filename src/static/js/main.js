@@ -354,29 +354,6 @@ function handleSendMessage() {
         logMessage(message, 'user');
         client.send({ text: message });
         messageInput.value = '';
-
-        // Add POST request
-        fetch('http://127.0.0.1:8010/human', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                text: message,
-                type: 'chat',
-                interrupt: true
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Message sent to digital human successfully!');
-            } else {
-                console.error('Failed to send message to digital human.');
-            }
-        })
-        .catch(error => {
-            console.error('Error sending message to digital human:', error);
-        });
     }
 }
 
@@ -416,10 +393,35 @@ client.on('content', (data) => {
         if (currentAiLogEntry === null) {
             logMessage('', 'ai'); // Create empty AI message
         }
+        let aiResponse = '';
         data.modelTurn.parts.forEach(part => {
             if (part.text) {
                 currentAiLogEntry.textContent += part.text; // Append text
+                aiResponse += part.text;
             }
+        });
+
+        // Add POST request
+        fetch('http://127.0.0.1:8010/human', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: aiResponse,
+                type: 'chat',
+                interrupt: true
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Message sent to digital human successfully!');
+            } else {
+                console.error('Failed to send message to digital human.');
+            }
+        })
+        .catch(error => {
+            console.error('Error sending message to digital human:', error);
         });
     }
 });
