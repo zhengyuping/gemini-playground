@@ -90,3 +90,35 @@
         <input type="hidden" id="sessionid" value="0">
     </div>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const testButton = document.getElementById('test-button');
+
+            testButton.addEventListener('click', () => {
+                fetch('http://127.0.0.1:8010/human', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: "test",
+                        type: 'echo',
+                        interrupt: true,
+                        sessionid: 0
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Message sent to digital human successfully!');
+                    } else {
+                        console.error('Failed to send message to digital human.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message to digital human:', error);
+                });
+            });
+        });
+    </script>
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
