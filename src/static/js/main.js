@@ -402,7 +402,7 @@ client.on('content', (data) => {
         });
 
         // Add POST request
-        fetch('http://127.0.0.1:8010/human', {
+        fetch('/human', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
