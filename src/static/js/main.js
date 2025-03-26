@@ -411,7 +411,7 @@ client.on('content', (data) => {
                 text: aiResponse,
                 type: 'echo',
                 interrupt: true,
-                sessionid: 0 //parseInt(document.getElementById('sessionid').value)  // index.html does not have sessionid
+                sessionid: parseInt(document.getElementById('sessionid').value)
             })
         })
         .then(response => {
