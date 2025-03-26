@@ -408,10 +408,10 @@ client.on('content', (data) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                text: aiResponse,
+                text: "test",
                 type: 'echo',
                 interrupt: true,
-                sessionid: parseInt(document.getElementById('sessionid').value)
+                sessionid: 0
             })
         })
         .then(response => {
