@@ -409,8 +409,9 @@ client.on('content', (data) => {
             },
             body: JSON.stringify({
                 text: aiResponse,
-                type: 'chat',
-                interrupt: true
+                type: 'echo',
+                interrupt: true,
+                sessionid: 0 //parseInt(document.getElementById('sessionid').value)  // index.html does not have sessionid
             })
         })
         .then(response => {
