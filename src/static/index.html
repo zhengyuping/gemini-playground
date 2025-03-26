@@ -63,7 +63,6 @@
         <button id="screen-button">
             <span id="screen-icon" class="material-symbols-outlined">screen_share</span>
         </button>
-        <button id="test-button">Test POST</button>
         <div class="audio-visualizers">
             <div class="visualizer-container">
                 <label>Input Audio</label>
@@ -91,17 +90,19 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const testButton = document.getElementById('test-button');
-            const sessionid = 683308;
+            const sendButton = document.getElementById('send-button');
 
-            testButton.addEventListener('click', () => {
+            sendButton.addEventListener('click', () => {
+                const message = document.getElementById('message-input').value.trim();
+                const sessionid = document.getElementById('sessionid').value;
+
                 fetch('http://127.0.0.1:8010/human', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        text: "test",
+                        text: message,
                         type: 'echo',
                         interrupt: true,
                         sessionid: sessionid
@@ -118,7 +119,50 @@
                     console.error('Error sending message to digital human:', error);
                 });
             });
+
+            function negotiate() {
+                pc.addTransceiver('video', { direction: 'recvonly' });
+                pc.addTransceiver('audio', { direction: 'recvonly' });
+                return pc.createOffer().then((offer) => {
+                    return pc.setLocalDescription(offer);
+                }).then(() => {
+                    // wait for ICE gathering to complete
+                    return new Promise((resolve) => {
+                        if (pc.iceGatheringState === 'complete') {
+                            resolve();
+                        } else {
+                            const checkState = () => {
+                                if (pc.iceGatheringState === 'complete') {
+                                    pc.removeEventListener('icegatheringstatechange', checkState);
+                                    resolve();
+                                }
+                            };
+                            pc.addEventListener('icegatheringstatechange', checkState);
+                        }
+                    });
+                }).then(() => {
+                    var offer = pc.localDescription;
+                    return fetch('/offer', {
+                        body: JSON.stringify({
+                            sdp: offer.sdp,
+                            type: offer.type,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'POST'
+                    });
+                }).then((response) => {
+                    return response.json();
+                }).then((answer) => {
+                    document.getElementById('sessionid').value = answer.sessionid
+                    return pc.setRemoteDescription(answer);
+                }).catch((e) => {
+                    alert(e);
+                });
+            }
         });
     </script>
     <script src="js/main.js" type="module"></script>
 </body>
+</html>
