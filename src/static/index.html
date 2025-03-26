@@ -92,6 +92,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const testButton = document.getElementById('test-button');
+            const sessionid = 683308;
 
             testButton.addEventListener('click', () => {
                 fetch('http://127.0.0.1:8010/human', {
@@ -103,7 +104,7 @@
                         text: "test",
                         type: 'echo',
                         interrupt: true,
-                        sessionid: 0
+                        sessionid: sessionid
                     })
                 })
                 .then(response => {
@@ -121,4 +122,3 @@
     </script>
     <script src="js/main.js" type="module"></script>
 </body>
-</html>
