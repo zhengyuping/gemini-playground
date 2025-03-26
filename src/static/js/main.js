@@ -247,7 +247,7 @@ async function resumeAudioContext() {
 /**
  * Connects to the WebSocket server.
  */
-async function connectToWebsocket() {
+function connectToWebsocket() {
     if (!apiKeyInput.value) {
         logMessage('Please input API Key', 'system');
         return;
@@ -279,9 +279,9 @@ async function connectToWebsocket() {
     };
 
     try {
-        await client.connect(config, apiKeyInput.value);
+        client.connect(config, apiKeyInput.value);
         isConnected = true;
-        await resumeAudioContext();
+        resumeAudioContext();
         connectButton.textContent = 'Disconnect';
         connectButton.classList.add('connected');
         messageInput.disabled = false;
