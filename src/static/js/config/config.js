@@ -2,7 +2,7 @@ export const CONFIG = {
     API: {
         VERSION: 'v1alpha',
         //MODEL_NAME: 'models/gemini-2.0-flash-exp'
-		MODEL_NAME: 'models/gemini-2.0-flash-exp-image-generation'
+		MODEL_NAME: 'models/gemini-2.0-flash-exp'
     },
     // You can change the system instruction to your liking
     SYSTEM_INSTRUCTION: {
